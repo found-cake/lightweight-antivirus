@@ -45,7 +45,13 @@ impl KernelEvent {
 
 fn generate_op_id() -> u64 {
     static COUNTER: AtomicU64 = AtomicU64::new(1);
-    COUNTER.fetch_add(1, Ordering::Relaxed)
+    let id = COUNTER.fetch_add(1, Ordering::Relaxed);
+
+    if id == u64::MAX {
+        COUNTER.store(1, Ordering::Relaxed);
+    }
+
+    id
 }
 
 fn current_timestamp() -> u64 {
