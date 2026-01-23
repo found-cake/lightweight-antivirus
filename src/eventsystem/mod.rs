@@ -15,6 +15,12 @@ pub struct EventSystem {
 
 impl EventSystem {
     pub fn new(buffer_size: usize) -> Self {
+        assert!(
+            buffer_size > 0,
+            "EventSystem::new requires buffer_size > 0, got {}",
+            buffer_size
+        );
+
         let (event_tx, event_rx) = channel(buffer_size);
         let (verdict_tx, verdict_rx) = channel(buffer_size);
         
