@@ -58,6 +58,6 @@ fn current_timestamp() -> u64 {
     use std::time::{SystemTime, UNIX_EPOCH};
     SystemTime::now()
         .duration_since(UNIX_EPOCH)
-        .unwrap()
+        .expect("System time is before UNIX epoch")
         .as_millis() as u64
 }
