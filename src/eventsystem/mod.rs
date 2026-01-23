@@ -3,6 +3,8 @@ use crate::eventsystem::{kernel::KernelEvent, user::UserVerdict};
 
 pub mod kernel;
 pub mod user;
+#[cfg(test)]
+mod test;
 
 pub struct EventSystem {
     event_tx: Sender<KernelEvent>,
