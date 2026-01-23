@@ -46,12 +46,12 @@ impl KernelEvent {
 fn generate_op_id() -> u64 {
     static COUNTER: AtomicU64 = AtomicU64::new(1);
     let id = COUNTER.fetch_add(1, Ordering::Relaxed);
-
-    if id == u64::MAX {
-        COUNTER.store(1, Ordering::Relaxed);
+    
+    if id == 0 {
+        COUNTER.fetch_add(1, Ordering::Relaxed)
+    } else {
+        id
     }
-
-    id
 }
 
 fn current_timestamp() -> u64 {
@@ -59,5 +59,6 @@ fn current_timestamp() -> u64 {
     SystemTime::now()
         .duration_since(UNIX_EPOCH)
         .expect("System time is before UNIX epoch")
+
         .as_millis() as u64
 }
