@@ -4,7 +4,9 @@ use std::time::{SystemTime, UNIX_EPOCH};
 
 use rusqlite::Connection;
 
-use super::{NewRule, PatternType, init_rule_db, init_rule_db_from_file, insert_rule, list_rules};
+use super::{
+    NewRule, PatternType, delete_rules, init_rule_db, init_rule_db_from_file, insert_rule, list_rules,
+};
 
 #[test]
 fn pattern_type_roundtrip() {
@@ -131,4 +133,67 @@ fn init_rule_db_from_file_persists_data() {
     assert_eq!(rules[0].pattern_type, PatternType::FilePath);
 
     let _ = fs::remove_file(&file_path);
+}
+
+#[test]
+fn delete_rules_removes_only_requested() {
+    let conn = Connection::open_in_memory().unwrap();
+    init_rule_db(&conn).unwrap();
+
+    let first = insert_rule(
+        &conn,
+        &NewRule {
+            name: "r1".into(),
+            pattern: "alpha".into(),
+            pattern_type: PatternType::Exact,
+            severity: 10,
+        },
+    )
+    .unwrap();
+
+    insert_rule(
+        &conn,
+        &NewRule {
+            name: "r2".into(),
+            pattern: "beta".into(),
+            pattern_type: PatternType::Contains,
+            severity: 20,
+        },
+    )
+    .unwrap();
+
+    let mut conn = conn;
+    let deleted = delete_rules(&mut conn, &[first]).unwrap();
+    assert_eq!(deleted, 1);
+
+    let rules = list_rules(&conn).unwrap();
+    assert_eq!(rules.len(), 1);
+    assert_eq!(rules[0].name, "r2");
+}
+
+#[test]
+fn delete_rules_with_empty_or_missing_indices() {
+    let conn = Connection::open_in_memory().unwrap();
+    init_rule_db(&conn).unwrap();
+
+    let first = insert_rule(
+        &conn,
+        &NewRule {
+            name: "only".into(),
+            pattern: "pattern".into(),
+            pattern_type: PatternType::Regex,
+            severity: 30,
+        },
+    )
+    .unwrap();
+
+    let mut conn = conn;
+    let deleted_none = delete_rules(&mut conn, &[]).unwrap();
+    assert_eq!(deleted_none, 0);
+
+    let deleted_missing = delete_rules(&mut conn, &[first + 999]).unwrap();
+    assert_eq!(deleted_missing, 0);
+
+    let rules = list_rules(&conn).unwrap();
+    assert_eq!(rules.len(), 1);
 }
