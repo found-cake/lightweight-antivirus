@@ -1,6 +1,8 @@
 mod model;
 mod repository;
 mod schema;
+#[cfg(test)]
+mod test;
 
 pub use model::{NewRule, PatternType, Rule};
 pub use repository::{insert_rule, list_rules};
