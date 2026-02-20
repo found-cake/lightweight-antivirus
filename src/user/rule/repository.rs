@@ -44,3 +44,22 @@ pub fn list_rules(conn: &Connection) -> Result<Vec<Rule>> {
 
     rules.collect()
 }
+
+pub fn delete_rules(conn: &mut Connection, indices: &[i64]) -> Result<usize> {
+    if indices.is_empty() {
+        return Ok(0);
+    }
+
+    let tx = conn.transaction()?;
+    let mut deleted = 0usize;
+
+    {
+        let mut stmt = tx.prepare("DELETE FROM rule_db WHERE idx = ?1")?;
+        for idx in indices {
+            deleted += stmt.execute([idx])?;
+        }
+    }
+
+    tx.commit()?;
+    Ok(deleted)
+}
