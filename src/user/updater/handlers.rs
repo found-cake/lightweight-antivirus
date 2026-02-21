@@ -47,4 +47,3 @@ fn server_error(err: SqliteError) -> (StatusCode, String) {
         format!("policy db error: {err}"),
     )
 }
-

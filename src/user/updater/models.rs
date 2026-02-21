@@ -1,17 +1,16 @@
 use serde::{Deserialize, Serialize};
 
 #[derive(Deserialize)]
-pub(super) struct DeleteRuleRequest {
+pub(crate) struct DeleteRuleRequest {
     pub idxs: Vec<i64>,
 }
 
-#[derive(Serialize)]
-pub(super) struct AddRuleResponse {
+#[derive(Serialize, Debug)]
+pub(crate) struct AddRuleResponse {
     pub idx: i64,
 }
 
-#[derive(Serialize)]
-pub(super) struct DeleteRuleResponse {
+#[derive(Serialize, Debug)]
+pub(crate) struct DeleteRuleResponse {
     pub deleted: usize,
 }
-

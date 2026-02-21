@@ -4,6 +4,8 @@ use axum::routing::{delete, get, post};
 mod handlers;
 mod models;
 mod state;
+#[cfg(test)]
+mod test;
 
 pub use state::UpdaterState;
 
