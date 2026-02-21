@@ -9,6 +9,7 @@ use super::{
 };
 
 #[test]
+// PatternType 문자열 매핑과 역매핑을 검증해 타입 변환 규칙이 깨지지 않음을 확인.
 fn pattern_type_roundtrip() {
     assert_eq!(PatternType::Exact.as_str(), "exact");
     assert_eq!(PatternType::Contains.as_str(), "contains");
@@ -31,6 +32,7 @@ fn pattern_type_roundtrip() {
 }
 
 #[test]
+// 빈 DB에서 규칙 목록 조회 시 빈 배열이 반환되는지 확인.
 fn init_and_list_rules_from_empty_db() {
     let conn = Connection::open_in_memory().unwrap();
 
@@ -41,6 +43,7 @@ fn init_and_list_rules_from_empty_db() {
 }
 
 #[test]
+// 두 건을 insert 후 목록 조회 시 저장된 순서와 모든 필드가 정확한지 확인.
 fn insert_and_list_rules_keeps_order_and_fields() {
     let conn = Connection::open_in_memory().unwrap();
     init_rule_db(&conn).unwrap();
@@ -83,6 +86,7 @@ fn insert_and_list_rules_keeps_order_and_fields() {
 }
 
 #[test]
+// 지원되지 않는 pattern_type 값이 DB에 기록되었을 때 list 시 에러가 발생해야 함을 확인.
 fn list_rules_returns_error_for_invalid_pattern_type() {
     let conn = Connection::open_in_memory().unwrap();
     init_rule_db(&conn).unwrap();
@@ -101,6 +105,7 @@ fn list_rules_returns_error_for_invalid_pattern_type() {
 }
 
 #[test]
+// 파일 기반 DB 초기화/재시작 후에도 데이터가 영속 저장되는지 확인.
 fn init_rule_db_from_file_persists_data() {
     let mut file_path = env::temp_dir();
     let ts = SystemTime::now()
@@ -136,6 +141,7 @@ fn init_rule_db_from_file_persists_data() {
 }
 
 #[test]
+// 특정 idx 삭제 시 해당 레코드만 제거되고 나머지는 유지되는지 확인.
 fn delete_rules_removes_only_requested() {
     let conn = Connection::open_in_memory().unwrap();
     init_rule_db(&conn).unwrap();
@@ -172,6 +178,7 @@ fn delete_rules_removes_only_requested() {
 }
 
 #[test]
+// 빈 인덱스 배열 또는 존재하지 않는 idx 삭제는 삭제 건수 0을 반환해야 함을 확인.
 fn delete_rules_with_empty_or_missing_indices() {
     let conn = Connection::open_in_memory().unwrap();
     init_rule_db(&conn).unwrap();

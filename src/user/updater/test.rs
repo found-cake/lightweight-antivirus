@@ -24,6 +24,7 @@ fn sample_rule(name: &'static str, pattern: &'static str, pattern_type: PatternT
     }
 }
 
+// GET 핸들러를 조회용으로 사용했을 때, 초기 상태에서 빈 목록이 반환되는지 확인.
 #[tokio::test]
 async fn list_rules_handler_returns_empty_by_default() {
     let state = build_state();
@@ -31,6 +32,7 @@ async fn list_rules_handler_returns_empty_by_default() {
     assert!(rules.is_empty());
 }
 
+// POST 핸들러가 규칙을 추가하고 idx가 1부터 시작해 반환되는지, 목록에도 반영되는지 확인.
 #[tokio::test]
 async fn add_rule_handler_inserts_and_returns_idx() {
     let state = build_state();
@@ -50,6 +52,7 @@ async fn add_rule_handler_inserts_and_returns_idx() {
     assert_eq!(rules[0].pattern_type, PatternType::Exact);
 }
 
+// DELETE 요청에서 idxs가 비어 있으면 400(BAD_REQUEST)와 고정 메시지를 반환해야 함을 확인.
 #[tokio::test]
 async fn delete_rule_handler_returns_bad_request_for_empty_idxs() {
     let state = build_state();
@@ -65,6 +68,7 @@ async fn delete_rule_handler_returns_bad_request_for_empty_idxs() {
     }
 }
 
+// DELETE 요청이 지정한 idx만 제거하고 나머지 규칙은 유지되는지 확인.
 #[tokio::test]
 async fn delete_rule_handler_removes_existing_indices() {
     let state = build_state();
