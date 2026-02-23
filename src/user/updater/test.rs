@@ -2,10 +2,13 @@ use axum::Json;
 use axum::extract::State;
 use axum::http::StatusCode;
 use rusqlite::Connection;
+use axum::response::Html;
 
 use crate::user::rule::{NewRule, PatternType, init_rule_db};
 
-use super::handlers::{add_rule_handler, delete_rule_handler, list_rules_handler};
+use super::handlers::{
+    add_rule_handler, delete_rule_handler, list_rules_handler, policy_page_handler,
+};
 use super::models::{AddRuleResponse, DeleteRuleRequest, DeleteRuleResponse};
 use super::state::UpdaterState;
 
@@ -99,4 +102,11 @@ async fn delete_rule_handler_removes_existing_indices() {
     assert_eq!(remaining.len(), 1);
     assert_eq!(remaining[0].idx, second);
     assert_eq!(remaining[0].name, "second");
+}
+
+#[tokio::test]
+async fn policy_page_handler_is_not_empty() {
+    let Html(page) = policy_page_handler().await;
+    assert!(!page.is_empty());
+    assert!(page.contains("Policy Rule Manager"));
 }
