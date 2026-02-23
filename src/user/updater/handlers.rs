@@ -1,6 +1,7 @@
 use axum::extract::State;
 use axum::http::StatusCode;
 use axum::Json;
+use axum::response::Html;
 use rusqlite::Error as SqliteError;
 
 use crate::user::rule::{delete_rules, insert_rule, list_rules, NewRule, Rule};
@@ -9,6 +10,7 @@ use crate::user::updater::state::UpdaterState;
 use super::models::{
     AddRuleResponse, DeleteRuleRequest, DeleteRuleResponse,
 };
+use super::page::POLICY_PAGE;
 
 pub(super) async fn list_rules_handler(
     State(state): State<UpdaterState>,
@@ -39,6 +41,10 @@ pub(super) async fn delete_rule_handler(
     let mut conn = state.conn.lock().await;
     let deleted = delete_rules(&mut conn, &payload.idxs).map_err(server_error)?;
     Ok(Json(DeleteRuleResponse { deleted }))
+}
+
+pub(super) async fn policy_page_handler() -> Html<&'static str> {
+    Html(POLICY_PAGE)
 }
 
 fn server_error(err: SqliteError) -> (StatusCode, String) {
