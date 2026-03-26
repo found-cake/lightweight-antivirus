@@ -1,10 +1,10 @@
-use tokio::sync::mpsc::{channel, Sender, Receiver};
 use crate::eventsystem::{kernel::KernelEvent, user::UserVerdict};
+use tokio::sync::mpsc::{Receiver, Sender, channel};
 
 pub mod kernel;
-pub mod user;
 #[cfg(test)]
 mod test;
+pub mod user;
 
 pub struct EventSystem {
     event_tx: Sender<KernelEvent>,
@@ -23,7 +23,7 @@ impl EventSystem {
 
         let (event_tx, event_rx) = channel(buffer_size);
         let (verdict_tx, verdict_rx) = channel(buffer_size);
-        
+
         Self {
             event_tx,
             event_rx: Some(event_rx),
@@ -31,14 +31,14 @@ impl EventSystem {
             verdict_rx: Some(verdict_rx),
         }
     }
-    
+
     pub fn take_kernel_handles(&mut self) -> KernelHandles {
         KernelHandles {
             event_tx: self.event_tx.clone(),
             verdict_rx: self.verdict_rx.take().expect("verdict_rx already taken"),
         }
     }
-    
+
     pub fn take_user_handles(&mut self) -> UserHandles {
         UserHandles {
             event_rx: self.event_rx.take().expect("event_rx already taken"),

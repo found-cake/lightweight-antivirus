@@ -11,7 +11,7 @@ fn test_op_id_generation() {
         "file1".to_string(),
         0,
     );
-    
+
     let event2 = KernelEvent::new(
         EventType::FileWrite,
         2,
@@ -49,7 +49,7 @@ async fn test_event_system_basic_flow() {
         op_id,
         verdict: Verdict::Deny,
         reason_code: 1001, // 악성코드 탐지 정책 id
-        ttl_ms: None
+        ttl_ms: None,
     };
     user.verdict_tx.send(verdict).await.unwrap();
 
@@ -85,7 +85,7 @@ async fn test_concurrent_event_processing() {
             );
             op_ids.push(event.op_id);
             kernel.event_tx.send(event).await.unwrap();
-            
+
             tokio::time::sleep(tokio::time::Duration::from_millis(10)).await;
         }
 
@@ -100,7 +100,7 @@ async fn test_concurrent_event_processing() {
 
     let user_task = tokio::spawn(async move {
         let mut processed = Vec::new();
-        
+
         for _ in 0..5 {
             let event = user.event_rx.recv().await.unwrap();
             processed.push(event.op_id);

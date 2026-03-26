@@ -3,7 +3,7 @@ pub struct UserVerdict {
     pub op_id: u64,
     pub verdict: Verdict,
     pub reason_code: u32,
-    pub ttl_ms: Option<u32>
+    pub ttl_ms: Option<u32>,
 }
 
 #[derive(Debug, Clone, PartialEq)]
